@@ -2,6 +2,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { Worker, spawn, Thread } from "threads"
 import { WorkerApi } from "./index.worker"
+import { Container, CssBaseline } from "@material-ui/core"
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import "./index.css"
 
 const init = async (): Promise<number> => {
@@ -12,10 +14,24 @@ const init = async (): Promise<number> => {
   return num
 }
 
+const theme = createMuiTheme({
+  palette: {
+    type: "dark",
+    background: {
+      default: "#121212",
+    },
+  },
+})
+
 init()
   .then((num: number): void => {
     ReactDOM.render(
-      <div>Hello World! {num}!</div>,
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Container maxWidth="md" className="m-10 text-lg">
+          Hello World! {num}!
+        </Container>
+      </ThemeProvider>,
       document.getElementById("root"),
     )
   })

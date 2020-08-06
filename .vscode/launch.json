@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "name": "@local/main DEV",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/app/main",
+      "program": "${workspaceFolder}/node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+      "args": ["--mode", "development"]
+    }
+  ]
+}

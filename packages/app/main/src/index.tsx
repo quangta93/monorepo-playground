@@ -1,9 +1,10 @@
+import { Container, CssBaseline } from "@material-ui/core"
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
 import React from "react"
 import ReactDOM from "react-dom"
-import { Worker, spawn, Thread } from "threads"
+import { spawn, Thread, Worker } from "threads"
 import { WorkerApi } from "~/workers"
-import { Container, CssBaseline } from "@material-ui/core"
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
+import { DISPLAY_NAME } from "@local/sub"
 import "./index.css"
 
 const init = async (): Promise<number> => {
@@ -28,8 +29,10 @@ init()
     ReactDOM.render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container maxWidth="md" className="m-10 text-lg">
+        <Container maxWidth="md" className="m-10">
           Hello World! {num}!
+          <br />
+          Hello from sub-package {DISPLAY_NAME}
         </Container>
       </ThemeProvider>,
       document.getElementById("root"),

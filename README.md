@@ -4,11 +4,12 @@ Monorepo built with Lerna, Yarn workspace, and Webpack that supports:
 
 - [x] Typescript via Babel
 - [x] Absolute path
-- [ ] Special config & public directory structure
+- [x] Public asset directory
+- [ ] Special config directory structure
 - [x] React
 - [x] ThreadJS
 - [x] Material UI
 - [x] TailwindCSS aka PostCSS
-- [ ] Uncompiled local dependencies
+- [x] Uncompiled local dependencies
 - [ ] Jest
 - [ ] React FastRefresh `yarn add -DW @pmmmwh/react-refresh-webpack-plugin react-refresh`

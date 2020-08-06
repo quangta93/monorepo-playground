@@ -6,8 +6,8 @@
   "license": "UNLICENSED",
   "main": "src/index.ts",
   "scripts": {
-    "build": "webpack -p --mode production",
-    "start": "webpack-dev-server --mode development",
+    "build": "webpack -p",
+    "start": "webpack-dev-server -d --mode=development",
     "test": "jest"
   },
   "dependencies": {

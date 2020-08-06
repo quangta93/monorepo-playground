@@ -3,7 +3,9 @@ const { HotModuleReplacementPlugin } = require("webpack")
 const CopyPlugin = require("copy-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const ManifestPlugin = require("webpack-manifest-plugin")
+const TerserJSPlugin = require("terser-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const ThreadsPlugin = require("threads-plugin")
 
@@ -12,11 +14,15 @@ module.exports = function (_, argv) {
   const DIST_DIR = path.resolve(BASE_DIR, "dist")
   const CONFIG_DIR = path.resolve(BASE_DIR, `env/${argv.mode}`)
 
-  return {
+  const config = {
+    mode: argv.mode,
     entry: path.resolve(BASE_DIR, "src/index.tsx"),
     output: {
       path: DIST_DIR,
       filename: `bundle${argv.mode === "production" ? ".[hash]" : ""}.js`,
+    },
+    resolve: {
+      extensions: [".tsx", ".ts", ".js", "jsx"],
     },
     module: {
       rules: [
@@ -27,16 +33,7 @@ module.exports = function (_, argv) {
         },
         {
           test: /\.css$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: "css-loader",
-              options: {
-                importLoaders: 1,
-              },
-            },
-            "postcss-loader",
-          ],
+          use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
         },
       ],
     },
@@ -57,7 +54,10 @@ module.exports = function (_, argv) {
         template: path.resolve(BASE_DIR, "index.html"),
         inject: "body",
       }),
-      new MiniCssExtractPlugin(),
+      new MiniCssExtractPlugin({
+        filename: `[name]${argv.mode === "production" ? ".[hash]" : ""}.css`,
+        chunkFilename: `[id]${argv.mode === "production" ? ".[hash]" : ""}.css`,
+      }),
       new CleanWebpackPlugin(),
       new HotModuleReplacementPlugin(),
       new ThreadsPlugin({
@@ -65,8 +65,23 @@ module.exports = function (_, argv) {
       }),
       new ManifestPlugin(),
     ].filter(Boolean),
-    resolve: {
-      extensions: [".tsx", ".ts", ".js", "jsx"],
-    },
   }
+
+  if (argv.mode === "production") {
+    config.optimization = {
+      minimizer: [
+        new TerserJSPlugin({
+          terserOptions: {
+            output: {
+              comments: false,
+            },
+          },
+          extractComments: false,
+        }),
+        new OptimizeCSSAssetsPlugin(),
+      ],
+    }
+  }
+
+  return config
 }

@@ -3,7 +3,7 @@
 Monorepo built with Lerna, Yarn workspace, and Webpack that supports:
 
 - [x] Typescript via Babel
-- [ ] Absolute path
+- [x] Absolute path
 - [ ] Special config & public directory structure
 - [x] React
 - [x] ThreadJS

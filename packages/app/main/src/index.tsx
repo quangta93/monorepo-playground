@@ -1,13 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { Worker, spawn, Thread } from "threads"
-import { WorkerApi } from "./index.worker"
+import { WorkerApi } from "~/workers"
 import { Container, CssBaseline } from "@material-ui/core"
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import "./index.css"
 
 const init = async (): Promise<number> => {
-  const worker = await spawn<WorkerApi>(new Worker("./index.worker.ts"))
+  const worker = await spawn<WorkerApi>(new Worker("~/workers/index.ts"))
   const num = await worker.hash()
 
   await Thread.terminate(worker)

@@ -7,6 +7,7 @@ const TerserJSPlugin = require("terser-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
 const ThreadsPlugin = require("threads-plugin")
 
 module.exports = function (_, argv) {
@@ -23,6 +24,11 @@ module.exports = function (_, argv) {
     },
     resolve: {
       extensions: [".tsx", ".ts", ".js", "jsx"],
+      plugins: [
+        new TsconfigPathsPlugin({
+          configFile: path.resolve(BASE_DIR, "tsconfig.json"),
+        }),
+      ],
     },
     module: {
       rules: [

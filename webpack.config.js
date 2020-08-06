@@ -17,7 +17,10 @@ module.exports = function (_, argv) {
 
   const config = {
     mode: argv.mode,
-    entry: path.resolve(BASE_DIR, "src/index.tsx"),
+    entry: [
+      path.resolve(BASE_DIR, "src/index.tsx"),
+      path.resolve(CONFIG_DIR, "config.ts"),
+    ],
     output: {
       path: DIST_DIR,
       filename: `bundle${argv.mode === "production" ? ".[hash]" : ""}.js`,

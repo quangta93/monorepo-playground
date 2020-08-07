@@ -1,19 +1,12 @@
+import { DISPLAY_NAME } from "@local/sub"
 import { Container, CssBaseline } from "@material-ui/core"
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
-import React from "react"
+import React, { FC, useEffect, useRef, useState } from "react"
 import ReactDOM from "react-dom"
-import { spawn, Thread, Worker } from "threads"
+import { Subscription } from "rxjs"
+import { spawn, Thread, Worker, ModuleThread } from "threads"
 import { WorkerApi } from "~/workers"
-import { DISPLAY_NAME } from "@local/sub"
 import "./index.css"
-
-const init = async (): Promise<number> => {
-  const worker = await spawn<WorkerApi>(new Worker("~/workers/index.ts"))
-  const num = await worker.hash()
-
-  await Thread.terminate(worker)
-  return num
-}
 
 const theme = createMuiTheme({
   palette: {
@@ -24,20 +17,44 @@ const theme = createMuiTheme({
   },
 })
 
-init()
-  .then((num: number): void => {
-    ReactDOM.render(
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Container maxWidth="md" className="m-10">
-          Hello World! {num}!
-          <br />
-          Hello from sub-package {DISPLAY_NAME}
-        </Container>
-      </ThemeProvider>,
-      document.getElementById("root"),
+const HelloWorld: FC = () => {
+  const workerRef = useRef<any>()
+  const subRef = useRef<Subscription>()
+  const [num, setNum] = useState<number>(0)
+
+  useEffect(() => {
+    spawn<WorkerApi>(new Worker("~/workers/index.ts")).then(
+      (_worker: ModuleThread<WorkerApi>) => {
+        workerRef.current = _worker
+
+        subRef.current = (workerRef.current as WorkerApi)
+          .hash()
+          .subscribe((result): void => setNum(result.num))
+      },
     )
-  })
-  .catch((error): void => {
-    document.body.innerHTML = `<pre>${error.stack}</pre>`
-  })
+
+    return () => {
+      if (subRef.current) {
+        subRef.current.unsubscribe()
+      }
+
+      if (workerRef.current) {
+        Thread.terminate(workerRef.current)
+      }
+    }
+  }, [workerRef])
+
+  return <span>Hello World! ${num}</span>
+}
+
+ReactDOM.render(
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <Container maxWidth="md" className="m-10">
+      <HelloWorld />
+      <br />
+      Hello from sub-package {DISPLAY_NAME}
+    </Container>
+  </ThemeProvider>,
+  document.getElementById("root"),
+)

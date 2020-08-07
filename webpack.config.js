@@ -9,11 +9,14 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin")
 const ThreadsPlugin = require("threads-plugin")
+const WebpackBar = require("webpackbar")
 
 module.exports = function (_, argv) {
   const BASE_DIR = process.cwd()
   const DIST_DIR = path.resolve(BASE_DIR, "dist")
   const CONFIG_DIR = path.resolve(BASE_DIR, `env/${argv.mode}`)
+
+  const isDev = argv.mode === "development"
 
   const config = {
     mode: argv.mode,
@@ -46,10 +49,13 @@ module.exports = function (_, argv) {
         },
       ],
     },
+    devtool:
+      argv.mode === "production" ? "source-map" : "eval-cheap-source-map",
     devServer: {
       port: 3000,
       hot: true,
       inline: true,
+      noInfo: true,
     },
     plugins: [
       new CopyPlugin({
@@ -68,7 +74,8 @@ module.exports = function (_, argv) {
         chunkFilename: `[id]${argv.mode === "production" ? ".[hash]" : ""}.css`,
       }),
       new CleanWebpackPlugin(),
-      new HotModuleReplacementPlugin(),
+      isDev && new HotModuleReplacementPlugin(),
+      isDev && new WebpackBar(),
       new ThreadsPlugin({
         globalObject: "self",
       }),

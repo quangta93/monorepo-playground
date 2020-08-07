@@ -1,0 +1,14 @@
+{
+  "name": "@local/basic",
+  "version": "0.0.0",
+  "author": "quangta93 <quangta93@gmail.com>",
+  "main": "lib/basic.js",
+  "scripts": {
+    "start": "webpack-dev-server --mode=development",
+    "build": "webpack -p"
+  },
+  "dependencies": {
+    "rxjs": "^6.6.2",
+    "threads": "^1.6.3"
+  }
+}
